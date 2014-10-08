@@ -14,8 +14,8 @@ import play.mvc.Result;
 public class Application extends Controller implements Observer {
     private static IGameController gameController;
 	    
-    public static Result index(int size) {
-    	Injector injector = Guice.createInjector(new CheckersModule(size, true, 0));
+    public static Result index(int size, boolean multiplayer, int difficulty) {
+    	Injector injector = Guice.createInjector(new CheckersModule(size, multiplayer, difficulty));
     	gameController = injector.getInstance(IGameController.class);
     	gameController.gameInit();
     	
