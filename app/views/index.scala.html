@@ -1,9 +1,25 @@
-@(message: String)
+@(data: List[List[String]], size: Int, nextPlayer: String, error: String)
 
 @main("Welcome to Checkers") {
 
-    <div style="font-family: courier; white-space: pre-wrap">
-        @message
+    <div style="font-family: courier;" class="field" id="field">
+        @for((row, rId) <- data.zipWithIndex) {
+        <div class="row" id="row@rId">
+            @for((cell, cId) <- row.zipWithIndex) {
+            <span class="cell" id = "col@rId@cId">
+                @cell
+            </span>
+            }
+        </div>
+        }
+    </div>
+    @if(!error.isEmpty) {
+    <div>
+        Error: @error        
+    </div>
+    }
+    <div>
+        Next Player: @nextPlayer
     </div>
 
 }
