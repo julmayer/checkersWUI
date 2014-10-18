@@ -1,0 +1,7 @@
+.myCell {
+    background-color: #E4CB9C;
+    float: left;
+    height: 50px;
+    width: 50px;
+    border: solid 1px black;
+}

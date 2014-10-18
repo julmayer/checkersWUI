@@ -67,7 +67,7 @@ public class Application extends Controller {
     			if (currentCell.isOccupied()) {
     				s = currentCell.getOccupier().toString();
     			} else {
-    				s = "-";
+    				s = "";
     			}
     			rows.get(y).add(x, s);
     		}

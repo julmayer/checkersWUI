@@ -4,13 +4,25 @@
 
     <div style="font-family: courier;" class="field" id="field">
         @for((row, rId) <- data.zipWithIndex) {
-        <div class="row" id="row@rId">
+        <div class="myRow" id="myRow@rId">
             @for((cell, cId) <- row.zipWithIndex) {
-            <span class="cell" id = "col@rId@cId">
-                @cell
-            </span>
+            <div class="myCell" id = "myCell@rId@cId">
+                @if(cell==" x ") {
+                <img src="@routes.Assets.at("images/blackFigure.png")" alt='x' class="blackFigure" id="blackFigure@rId@cId">
+                }
+                @if(cell==" X ") {
+                <img src="@routes.Assets.at("images/blackFigureCrowened.png")" alt='X' class="blackFigureCrowened" id="blackFigureCrowened@rId@cId">
+                }
+                @if(cell==" o ") {
+                <img src="@routes.Assets.at("images/whiteFigure.png")" alt='o' class="whiteFigure" id="whiteFigure@rId@cId">
+                }
+                @if(cell==" O ") {
+                <img src="@routes.Assets.at("images/whiteFigureCrowened.png")" alt='O' class="whiteFigureCrowened" id="whiteFigureCrowened@rId@cId">
+                }
+            </div>
             }
         </div>
+        <div style="clear:both"></div>
         }
     </div>
     @if(!error.isEmpty) {
