@@ -5,3 +5,19 @@
     width: 50px;
     border: solid 1px black;
 }
+
+.myCell:hover {
+	border: solid 1px blue;
+}
+
+.myRow{
+	clear:both;
+}
+
+#errorDiv{
+	clear:both;
+}
+
+#nextPlayerDiv{
+    clear:both;
+}
