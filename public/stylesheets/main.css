@@ -14,6 +14,14 @@
 	clear:both;
 }
 
+div.Even span.Even {
+	background-color: #b89d77;
+}
+
+div.Odd span.Odd {
+    background-color: #b89d77;
+}
+
 #errorDiv{
 	clear:both;
 }
