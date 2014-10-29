@@ -4,33 +4,32 @@
 
     <div style="font-family: courier;" class="field" id="field">
         @for((row, rId) <- data.zipWithIndex) {
-        <div class="myRow" id="myRow@rId">
+        <div class="myRow" id="myRow-@rId">
             @for((cell, cId) <- row.zipWithIndex) {
-            <div class="myCell" id = "myCell@rId@cId">
+            <span class="myCell" id = "myCell-@rId-@cId" ondrop="drop(event)" ondragover="allowDrop(event)">
                 @if(cell==" x ") {
-                <img src="@routes.Assets.at("images/blackFigure.png")" alt='x' class="blackFigure" id="blackFigure@rId@cId">
+                <img src="@routes.Assets.at("images/blackFigure.png")" alt='x' class="blackFigure" id="blackFigure-@rId-@cId" draggable="true" ondragstart="drag(event)">
                 }
                 @if(cell==" X ") {
-                <img src="@routes.Assets.at("images/blackFigureCrowened.png")" alt='X' class="blackFigureCrowened" id="blackFigureCrowened@rId@cId">
+                <img src="@routes.Assets.at("images/blackFigureCrowened.png")" alt='X' class="blackFigureCrowened" id="blackFigureCrowened-@rId-@cId" draggable="true" ondragstart="drag(event)">
                 }
                 @if(cell==" o ") {
-                <img src="@routes.Assets.at("images/whiteFigure.png")" alt='o' class="whiteFigure" id="whiteFigure@rId@cId">
+                <img src="@routes.Assets.at("images/whiteFigure.png")" alt='o' class="whiteFigure" id="whiteFigure-@rId-@cId" draggable="true" ondragstart="drag(event)">
                 }
                 @if(cell==" O ") {
-                <img src="@routes.Assets.at("images/whiteFigureCrowened.png")" alt='O' class="whiteFigureCrowened" id="whiteFigureCrowened@rId@cId">
+                <img src="@routes.Assets.at("images/whiteFigureCrowened.png")" alt='O' class="whiteFigureCrowened" id="whiteFigureCrowened-@rId-@cId" draggable="true" ondragstart="drag(event)">
                 }
-            </div>
+            </span>
             }
         </div>
-        <div style="clear:both"></div>
         }
     </div>
     @if(!error.isEmpty) {
-    <div>
+    <div id="errorDiv">
         Error: @error        
     </div>
     }
-    <div>
+    <div id="nextPlayerDiv">
         Next Player: @nextPlayer
     </div>
 
