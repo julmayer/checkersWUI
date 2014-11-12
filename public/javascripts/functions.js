@@ -6,7 +6,7 @@ var toY;
 var clickCount = 0;
 
 //TODO: better error handling
-$( document ).ready(function() {
+$(function() {
 	
 	$(".myCell").click(function(event) {
 		if(clickCount == 0){

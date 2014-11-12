@@ -14,6 +14,7 @@ import com.google.inject.Injector;
 
 import de.htwg.checkers.CheckersModule;
 import de.htwg.checkers.controller.IGameController;
+import de.htwg.checkers.controller.bot.Bot;
 import de.htwg.checkers.models.Cell;
 import de.htwg.checkers.util.observer.Observer;
 
@@ -25,9 +26,9 @@ public class Application extends Controller {
     }
 
     public static Result index(int size, boolean multiplayer, int difficulty) {
-    	Injector injector = Guice.createInjector(new CheckersModule(size, multiplayer, difficulty));
+    	Injector injector = Guice.createInjector(new CheckersModule());
     	gameController = injector.getInstance(IGameController.class);
-    	gameController.gameInit();
+    	gameController.gameInit(size, multiplayer, Bot.valueOf(difficulty));
     	
     	return renderPage();
     }
