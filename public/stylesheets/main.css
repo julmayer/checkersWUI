@@ -1,51 +1,35 @@
 body{
 	 background-image:url('../images/checkersBG.jpg');
 	 background-size:cover;
-	 background-position:fixed;
-	 margin-top: 100px;
+	 background-attachment:fixed;
+	 margin-top: 0px;
 	 margin-left:0px;
 	 margin-right:0px;
 	 margin-bottom:0px;
 }
 
 img{
-	max-width:100%;
-}
-
-.navbarInner div{
-	display:inline-block;
-}
-
-.navbarInner{
-	padding: 10px 25px;
-}
-
-.navbarTitle a{
-	font-family: 'Shadows Into Light', cursive;
-	text-decoration: none;
-	font-size:30px;
-	color:black;
-}
-
-.navbarNav{
-	float:right;
-}
-
-.navbarOuter{
 	width:100%;
+}
+
+.contentContainer{
+	padding:25px;
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
 	background-color:white;
 }
 
-.navbar-fixed-top{
-	position:fixed;
-	top:0px;
+.navbar-brand {
+    min-width: 200px;
+    font-family: 'Shadows Into Light', cursive;
 }
 
 .myCell {
     background-color: #E4CB9C;
     float: left;
-    height: 48px;
-    width: 48px;
+    height: 50px;
+    width: 50px;
     border: solid 1px black;
 }
 
@@ -53,25 +37,13 @@ img{
 	border: solid 1px blue;
 }
 
+.field{
+	padding-left:0px;
+	padding-right:0px;
+}
+
 .myRow{
 	clear:both;
-}
-
-.field{
-	font-family: courier;
-	float:left;
-}
-
-.contentWrapper{
-	margin-left:50px;
-	margin-right:50px;
-	background-color: white;
-    border-radius: 10px;
-    padding: 25px;
-}
-
-.gameMessages{
-	float:left;
 }
 
 #errorDiv{
@@ -82,14 +54,17 @@ img{
     clear:both;
 }
 
-#content{
-    display:inline-block;
-}
-
 div.Even span.Even {
     background-color: #b89d77;
 }
 
 div.Odd span.Odd {
     background-color: #b89d77;
+}
+
+@media only screen and ( max-width: 436px ){
+    .myCell {
+        height: 30px;
+        width: 30px;
+    }
 }
