@@ -1,36 +1,25 @@
-@(data: List[List[String]], size: Int, nextPlayer: String, error: String)
+@main("Welcome to checkers") {
 
-@main("Welcome to Checkers") {
+<div>
+    <h1>Welcome to checkers</h1>
+</div>
 
-    <div style="font-family: courier;" class="field" id="field">
-        @for((row, rId) <- data.zipWithIndex) {
-        <div class="myRow @if(rId%2==0) {Even} else {Odd}" id="myRow-@rId">
-            @for((cell, cId) <- row.zipWithIndex) {
-            <span class="myCell @if(cId%2==0) {Even} else {Odd}" id = "myCell-@rId-@cId" ondrop="drop(event)" ondragover="allowDrop(event)">
-                @if(cell==" x ") {
-                <img src="@routes.Assets.at("images/blackFigure.png")" alt='x' class="blackFigure" id="blackFigure-@rId-@cId" draggable="true" ondragstart="drag(event)">
-                }
-                @if(cell==" X ") {
-                <img src="@routes.Assets.at("images/blackFigureCrowened.png")" alt='X' class="blackFigureCrowened" id="blackFigureCrowened-@rId-@cId" draggable="true" ondragstart="drag(event)">
-                }
-                @if(cell==" o ") {
-                <img src="@routes.Assets.at("images/whiteFigure.png")" alt='o' class="whiteFigure" id="whiteFigure-@rId-@cId" draggable="true" ondragstart="drag(event)">
-                }
-                @if(cell==" O ") {
-                <img src="@routes.Assets.at("images/whiteFigureCrowened.png")" alt='O' class="whiteFigureCrowened" id="whiteFigureCrowened-@rId-@cId" draggable="true" ondragstart="drag(event)">
-                }
-            </span>
-            }
-        </div>
-        }
-    </div>
-    @if(!error.isEmpty) {
-    <div id="errorDiv">
-        Error: @error        
-    </div>
-    }
-    <div id="nextPlayerDiv">
-        Next Player: @nextPlayer
-    </div>
+<div class="margin-top-75">
+    <p>
+		Checkers or draughts is the name of several different board games. All of these games are similar. In every kind of checkers, the other player's pieces can be taken by being "jumped" over.
+		"Checkers" is the American name. In British English, and in various other English-speaking nations, these games are called "draughts."
+		The rules and championships are controlled by the World Draughts Federation.
+    </p>
+    <p>
+        Checkers dates back to the 12th century, in France. Later, maybe in 1535, a new rule was added: when a player can jump, he must jump. No single inventor is known for this ancient game, although Arthur L. Samuel was the first to create a checkers computer game in 1952. 
+    </p>
+</div>
+
+<div class="col-xs-6 text-center margin-top-75">
+    <a href="/rules" class="btn btn-default">Rules</a>
+</div>
+<div class="col-xs-6 text-center margin-top-75">
+    <a href="/play" class="btn btn-default">Play</a>
+</div>
 
 }

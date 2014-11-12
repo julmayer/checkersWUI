@@ -1,0 +1,38 @@
+@(data: List[List[String]], size: Int, nextPlayer: String, error: String)
+
+@main("Play the game") {
+
+    <div style="min-width:@{size*50}px;min-height:@{size*50}px" class="field col-md-6" id="field">
+        @for((row, rId) <- data.zipWithIndex) {
+        <div class="myRow @if(rId%2==0) {Even} else {Odd}" id="myRow-@rId">
+            @for((cell, cId) <- row.zipWithIndex) {
+            <span class="myCell @if(cId%2==0) {Even} else {Odd}" id = "myCell-@rId-@cId" ondrop="drop(event)" ondragover="allowDrop(event)">
+                @if(cell==" x ") {
+                <img src="@routes.Assets.at("images/blackFigure.png")" alt='x' class="blackFigure" id="blackFigure-@rId-@cId" draggable="true" ondragstart="drag(event)">
+                }
+                @if(cell==" X ") {
+                <img src="@routes.Assets.at("images/blackFigureCrowened.png")" alt='X' class="blackFigureCrowened" id="blackFigureCrowened-@rId-@cId" draggable="true" ondragstart="drag(event)">
+                }
+                @if(cell==" o ") {
+                <img src="@routes.Assets.at("images/whiteFigure.png")" alt='o' class="whiteFigure" id="whiteFigure-@rId-@cId" draggable="true" ondragstart="drag(event)">
+                }
+                @if(cell==" O ") {
+                <img src="@routes.Assets.at("images/whiteFigureCrowened.png")" alt='O' class="whiteFigureCrowened" id="whiteFigureCrowened-@rId-@cId" draggable="true" ondragstart="drag(event)">
+                }
+            </span>
+            }
+        </div>
+        }
+    </div>
+    <div class="gameMessages col-md-6">
+        @if(!error.isEmpty) {
+        <div id="errorDiv">
+            Error: @error        
+        </div>
+        }
+        <div id="nextPlayerDiv">
+            Next Player: @nextPlayer
+        </div>
+    </div>
+
+}

@@ -1,3 +1,45 @@
+body{
+	 background-image:url('../images/checkersBG.jpg');
+	 background-size:cover;
+	 background-attachment:fixed;
+	 margin-top: 0px;
+	 margin-left:0px;
+	 margin-right:0px;
+	 margin-bottom:0px;
+	 font-family: 'ABeeZee', sans-serif;
+}
+
+h1{
+	text-align:center;
+	font-family: 'Shadows Into Light', cursive;
+}
+
+h2{
+    text-align:center;
+    font-family: 'Shadows Into Light', cursive;
+}
+
+img{
+	width:100%;
+}
+
+.margin-top-75{
+	margin-top:75px;
+}
+
+.contentContainer{
+	padding:25px;
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	background-color:white;
+	margin-bottom:20px;
+}
+
+.navbar-brand {
+    font-family: 'Shadows Into Light', cursive;
+}
+
 .myCell {
     background-color: #E4CB9C;
     float: left;
@@ -10,16 +52,13 @@
 	border: solid 1px blue;
 }
 
+.field{
+	padding-left:0px;
+	padding-right:0px;
+}
+
 .myRow{
 	clear:both;
-}
-
-div.Even span.Even {
-	background-color: #b89d77;
-}
-
-div.Odd span.Odd {
-    background-color: #b89d77;
 }
 
 #errorDiv{
@@ -28,4 +67,19 @@ div.Odd span.Odd {
 
 #nextPlayerDiv{
     clear:both;
+}
+
+div.Even span.Even {
+    background-color: #b89d77;
+}
+
+div.Odd span.Odd {
+    background-color: #b89d77;
+}
+
+@media only screen and ( max-width: 436px ){
+    .myCell {
+        height: 30px;
+        width: 30px;
+    }
 }
