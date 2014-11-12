@@ -2,11 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /                                   controllers.Application.sindex()
-GET     /:size&:multiplayer&:difficulty     controllers.Application.index(size: Int, multiplayer: Boolean, difficulty:Int)
-GET     /input/:move                		controllers.Application.input(move: String)    
-GET     /rules                              controllers.Application.rules() 
-GET     /play                               controllers.Application.playGame() 
+GET     /                                        controllers.Application.index()
+GET     /play/:size&:multiplayer&:difficulty     controllers.Application.playGame(size: Int, multiplayer: Boolean, difficulty:Int)
+GET     /input/:move                		     controllers.Application.input(move: String)    
+GET     /rules                                   controllers.Application.rules() 
+GET     /play                                    controllers.Application.sPlayGame() 
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

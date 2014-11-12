@@ -20,11 +20,11 @@ import de.htwg.checkers.util.observer.Observer;
 public class Application extends Controller {
     private static IGameController gameController;
 	    
-    public static Result sindex() {
-    	return index(8, false, 0);
+    public static Result sPlayGame() {
+    	return playGame(8, false, 0);
     }
 
-    public static Result index(int size, boolean multiplayer, int difficulty) {
+    public static Result playGame(int size, boolean multiplayer, int difficulty) {
     	Injector injector = Guice.createInjector(new CheckersModule(size, multiplayer, difficulty));
     	gameController = injector.getInstance(IGameController.class);
     	gameController.gameInit();
@@ -51,7 +51,7 @@ public class Application extends Controller {
     		error = gameController.getError();
     	}
     	
-    	return ok(views.html.index.render(data, data.size(), nextPlayer, error));
+    	return ok(views.html.playGame.render(data, data.size(), nextPlayer, error));
     }
     
     private static List<List<String>> updateData(Cell[][] matrix) {
@@ -82,7 +82,7 @@ public class Application extends Controller {
     	return ok(views.html.rules.render());
     }
     
-    public static Result playGame(){
-    	return ok(views.html.playGame.render());
+    public static Result index(){
+    	return ok(views.html.index.render());
     }
 }
