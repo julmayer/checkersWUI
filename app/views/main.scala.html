@@ -5,26 +5,30 @@
 <head>
     <title>@title</title>
     <link rel='shortcut icon' type='image/png' href='@routes.Assets.at("images/favicon.png")'>
-    <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))'>
+    <!-- <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))'> -->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"> -->
     <link rel='stylesheet' href='@routes.Assets.at("stylesheets/main.css")'>
+    <link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'>
     <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
     <script type='text/javascript' src='@routes.Assets.at("javascripts/functions.js")'></script>
-    <style>
-    body {
-        margin-top: 50px;
-    }
-    </style>
 </head>
 <body>
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container-fluid">
+    <div class="navbarOuter navbar-fixed-top">
+        <div class="navbarInner">
+            <div class="navbarTitle">
                 <a id="titleLink" class="brand" href="/">@title</a>
+            </div>
+            <div class="navbarNav">
+                <span><a href="/">Home</a></span>
+                <span><a href="/rules">Rules</a></span>
+                <span><a href="/play">Play</a></span>
             </div>
         </div>
     </div>
-    <div class="container" id="content">
-        @content
-    </div>
+    <div class="contentWrapper">
+	    <div id="content" >
+	        @content
+	    </div>
+	</div>
 </body>
 </html>

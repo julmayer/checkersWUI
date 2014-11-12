@@ -1,8 +1,51 @@
+body{
+	 background-image:url('../images/checkersBG.jpg');
+	 background-size:cover;
+	 background-position:fixed;
+	 margin-top: 100px;
+	 margin-left:0px;
+	 margin-right:0px;
+	 margin-bottom:0px;
+}
+
+img{
+	max-width:100%;
+}
+
+.navbarInner div{
+	display:inline-block;
+}
+
+.navbarInner{
+	padding: 10px 25px;
+}
+
+.navbarTitle a{
+	font-family: 'Shadows Into Light', cursive;
+	text-decoration: none;
+	font-size:30px;
+	color:black;
+}
+
+.navbarNav{
+	float:right;
+}
+
+.navbarOuter{
+	width:100%;
+	background-color:white;
+}
+
+.navbar-fixed-top{
+	position:fixed;
+	top:0px;
+}
+
 .myCell {
     background-color: #E4CB9C;
     float: left;
-    height: 50px;
-    width: 50px;
+    height: 48px;
+    width: 48px;
     border: solid 1px black;
 }
 
@@ -14,12 +57,21 @@
 	clear:both;
 }
 
-div.Even span.Even {
-	background-color: #b89d77;
+.field{
+	font-family: courier;
+	float:left;
 }
 
-div.Odd span.Odd {
-    background-color: #b89d77;
+.contentWrapper{
+	margin-left:50px;
+	margin-right:50px;
+	background-color: white;
+    border-radius: 10px;
+    padding: 25px;
+}
+
+.gameMessages{
+	float:left;
 }
 
 #errorDiv{
@@ -28,4 +80,16 @@ div.Odd span.Odd {
 
 #nextPlayerDiv{
     clear:both;
+}
+
+#content{
+    display:inline-block;
+}
+
+div.Even span.Even {
+    background-color: #b89d77;
+}
+
+div.Odd span.Odd {
+    background-color: #b89d77;
 }

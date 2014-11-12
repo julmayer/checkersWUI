@@ -2,7 +2,7 @@
 
 @main("Welcome to Checkers") {
 
-    <div style="font-family: courier;" class="field" id="field">
+    <div style="width:@{size*50}px;height:@{size*50}px" class="field col-ld-8" id="field">
         @for((row, rId) <- data.zipWithIndex) {
         <div class="myRow @if(rId%2==0) {Even} else {Odd}" id="myRow-@rId">
             @for((cell, cId) <- row.zipWithIndex) {
@@ -24,13 +24,15 @@
         </div>
         }
     </div>
-    @if(!error.isEmpty) {
-    <div id="errorDiv">
-        Error: @error        
-    </div>
-    }
-    <div id="nextPlayerDiv">
-        Next Player: @nextPlayer
-    </div>
+	<div class="gameMessages">
+	    @if(!error.isEmpty) {
+	    <div id="errorDiv">
+	        Error: @error        
+	    </div>
+	    }
+	    <div id="nextPlayerDiv">
+	        Next Player: @nextPlayer
+	    </div>
+	</div>
 
 }

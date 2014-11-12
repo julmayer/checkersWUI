@@ -77,4 +77,12 @@ public class Application extends Controller {
     	
     	return rows;
     }
+    
+    public static Result rules(){
+    	return ok(views.html.rules.render());
+    }
+    
+    public static Result playGame(){
+    	return ok(views.html.playGame.render());
+    }
 }
