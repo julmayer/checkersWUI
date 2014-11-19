@@ -5,10 +5,9 @@ var toX;
 var toY;
 var clickCount = 0;
 
-//TODO: better error handling
 $(function() {
 	
-	$(".myCell").click(function(event) {
+	$(".contentContainer ").on("click",".myCell",function(event) {
 		if(clickCount == 0){
 	        fromX = decodePosition(event.target.id, "x");
 	    	fromY = decodePosition(event.target.id, "y");
@@ -17,7 +16,8 @@ $(function() {
 			toX = decodePosition(event.target.id, "x");
 	    	toY = decodePosition(event.target.id, "y");
 	    	clickCount = 0;
-	    	window.location = "http://localhost:9000/input/"+fromX +" "+ fromY +" "+ toX +" "+ toY;
+	    	var input = "input/" + fromX + "%20" + fromY + "%20" + toX + "%20" + toY + " #content";
+	    	$( "#content" ).load(input);
 		}
     });
 	
@@ -33,8 +33,8 @@ function drop(event){
 	toX = decodePosition(event.target.id, "x");
 	toY = decodePosition(event.target.id, "y");
 	
-	//TODO ajax reload, current: loads whole new site -> bad
-	window.location = "http://localhost:9000/input/"+fromX +" "+ fromY +" "+ toX +" "+ toY;
+	var input = "input/" + fromX + "%20" + fromY + "%20" + toX + "%20" + toY + " #content";
+	$( "#content" ).load(input);
 }
 
 function allowDrop(event){

@@ -59,8 +59,13 @@ img{
     border-radius: 100px;
 }
 
-.navbar-brand {
+.navbar-inverse .navbar-brand{
     font-family: 'Shadows Into Light', cursive;
+    color: white;
+    font-size: 25px;
+}
+.navbar-inverse .navbar-brand:hover{
+	color:#D0B997;
 }
 
 .myCell {
@@ -82,6 +87,13 @@ img{
 
 .myRow{
 	clear:both;
+}
+
+.navbar-inverse .navbar-nav > li > a{
+	color:white;
+}
+.navbar-inverse .navbar-nav > li > a:hover{
+    color:#D0B997;
 }
 
 #errorDiv{

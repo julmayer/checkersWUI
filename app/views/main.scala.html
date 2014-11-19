@@ -32,7 +32,7 @@
 	    </div>
 	    <div class="collapse navbar-collapse" id="myNavbar">
 	      <ul class="nav navbar-nav navbar-right">
-	        <li><a class="active" href="/">Home</a></li>
+	        <li><a href="/">Home</a></li>
 	        <li><a href="/rules">Rules</a></li>
 	        <li><a href="/play">Play</a></li>
 	      </ul>
@@ -41,7 +41,9 @@
 	</nav>
     <div class="container">
         <div class="contentContainer row">
-            @content
+            <div id="content">
+                @content
+            </div>
         </div>
 	</div>
 </body>
