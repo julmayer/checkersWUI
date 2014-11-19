@@ -7,7 +7,7 @@ var clickCount = 0;
 
 $(function() {
 	
-	$(".contentContainer ").on("click",".myCell",function(event) {
+	$("#content").on("click",".myCell",function(event) {
 		if(clickCount == 0){
 	        fromX = decodePosition(event.target.id, "x");
 	    	fromY = decodePosition(event.target.id, "y");
@@ -17,7 +17,7 @@ $(function() {
 	    	toY = decodePosition(event.target.id, "y");
 	    	clickCount = 0;
 	    	var input = "input/" + fromX + "%20" + fromY + "%20" + toX + "%20" + toY + " #content";
-	    	$( "#content" ).load(input);
+	    	$("#content").load(input);
 		}
     });
 	

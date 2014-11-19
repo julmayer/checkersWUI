@@ -17,19 +17,32 @@ import de.htwg.checkers.controller.IGameController;
 import de.htwg.checkers.controller.bot.Bot;
 import de.htwg.checkers.models.Cell;
 import de.htwg.checkers.util.observer.Observer;
+import de.htwg.checkers.view.gui.GameFrame;
+import de.htwg.checkers.view.tui.TUI;
 
 public class Application extends Controller {
     private static IGameController gameController;
-	    
+	private static GameFrame gui;    
+    private static TUI tui;
     public static Result sPlayGame() {
-    	return playGame(8, false, 0);
+    	return playGame(8, true, Bot.SIMPLE_BOT.ordinal());
     }
 
     public static Result playGame(int size, boolean multiplayer, int difficulty) {
 		Injector injector = Guice.createInjector(new CheckersModule());
     	gameController = injector.getInstance(IGameController.class);
-    	gameController.gameInit(size, multiplayer, Bot.valueOf(difficulty));
-    	
+    	gui = injector.getInstance(GameFrame.class);
+    	tui = injector.getInstance(TUI.class);
+    	//gameController.gameInit(size, multiplayer, Bot.valueOf(difficulty));
+    	StringBuilder buildInput = new StringBuilder();
+    	buildInput.append(size);
+    	if (multiplayer) {
+    		buildInput.append(" M ");
+    	} else {
+    		buildInput.append(" S ");
+    	}
+    	buildInput.append(difficulty);
+    	gameController.input(buildInput.toString());
     	return renderPage();
     }
     
