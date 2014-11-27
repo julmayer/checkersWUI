@@ -1,0 +1,23 @@
+@(openMatches : Map[String, model.Match])
+
+@main("Welcome to checkers") {
+    <div class="col-md-12">
+	    <h2>Open games</h2>
+	    <div class="list-group">
+            @if(openMatches.isEmpty) {
+             <a href="#" class="list-group-item disabled">
+            No open games, please create a new game.
+            </a>
+            }
+	        @for((id, openMatch) <- openMatches) {
+	        <a href="/join/@id" class="list-group-item">@openMatch.getHoster().getName()</a>
+	        }
+		</div>
+		<div class="col-md-6 text-center margin-top-75" >
+		   <a href="/create/Multi" class="btn btn-default">Create multiplayergame</a>
+		</div>
+		<div class="col-md-6 text-center margin-top-75">
+		   <a href="/create/Single" class="btn btn-default">Start singleplayergame</a>
+	    </div>
+    </div>
+}

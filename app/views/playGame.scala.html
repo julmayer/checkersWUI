@@ -31,7 +31,7 @@
     </div>
     <div class="gameMessages col-md-6 text-center">
         <div id="nextPlayerDiv">
-            <p>Next Player: @nextPlayer</p>
+            <p>@nextPlayer</p>
             <div class=" text-center turnIconContainer">
 	            @if(nextPlayer=="Black") {
 	                <div class="turnIcon" style="background-color:black"></div>
@@ -46,6 +46,9 @@
             <p class="myWarning">Error: @error</p>        
         </div>
         }
+    </div>
+    <div class="col-md-12 text-center margin-top-75">
+        <a href="/refresh" class="btn btn-default">manuell refresh</a>
     </div>
 
 }
