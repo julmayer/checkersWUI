@@ -6,7 +6,6 @@ var toY;
 var clickCount = 0;
 
 $(function() {
-	
 	$("#content").on("click",".myCell",function(event) {
 		if(clickCount == 0){
 	        fromX = decodePosition(event.target.id, "x");
@@ -16,7 +15,7 @@ $(function() {
 			toX = decodePosition(event.target.id, "x");
 	    	toY = decodePosition(event.target.id, "y");
 	    	clickCount = 0;
-	    	var input = "input/" + fromX + "%20" + fromY + "%20" + toX + "%20" + toY + " #content";
+	    	var input = "/input/" + fromX + "%20" + fromY + "%20" + toX + "%20" + toY + " #content";
 	    	$("#content").load(input);
 		}
     });
@@ -33,7 +32,7 @@ function drop(event){
 	toX = decodePosition(event.target.id, "x");
 	toY = decodePosition(event.target.id, "y");
 	
-	var input = "input/" + fromX + "%20" + fromY + "%20" + toX + "%20" + toY + " #content";
+	var input = "/input/" + fromX + "%20" + fromY + "%20" + toX + "%20" + toY + " #content";
 	$( "#content" ).load(input);
 }
 
