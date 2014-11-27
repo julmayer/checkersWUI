@@ -78,7 +78,7 @@ public class Application extends Controller {
     	} else {
     		System.out.println("start Single");
     		runningMatches.put(match.getId(), match);
-    		result = playGame(8, type.equals("Multi"), 0, match.getGameController());
+    		result = playGame(8, false, 0, match.getGameController());
     	}
     	
     	return result;
@@ -143,9 +143,20 @@ public class Application extends Controller {
     }
     
     private static Result renderPage(IGameController gameController) {
-        String checkersId = request().cookie(COOKIE_NAME).value();
-        String[] ids = checkersId.split("_");
-        String player = ids[1];
+        String player;
+        if (request().cookie(COOKIE_NAME) == null) {
+            // first request, cookie not yet delivered but is in response.
+            for (Cookie cookie : response().cookies()) {
+                if (cookie.name().equals(COOKIE_NAME)) {
+                    player = cookie.value();
+                }
+            }
+            player = "Unknown";
+        } else {
+            String checkersId = request().cookie(COOKIE_NAME).value();
+            String[] ids = checkersId.split("_");
+            player = ids[1];
+        }
         Result result;
         if (gameController.getCurrentState() == State.RUNNING) {
         	List<List<String>> data = updateData(gameController.getField().getField());
