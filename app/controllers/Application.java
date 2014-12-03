@@ -227,7 +227,7 @@ public class Application extends Controller {
 		
 		
 		return new WebSocket<String>() {
-			public void onReady(WebSocket.In<String> in,WebSocket.Out<String> out) {
+			public void onReady(WebSocket.In<String> in,final WebSocket.Out<String> out) {
 				//set in and out to player
 				
 				
