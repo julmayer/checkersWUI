@@ -10,14 +10,16 @@
             </a>
             }
 	        @for((id, openMatch) <- openMatches) {
-	        <a href="/join/@id" class="list-group-item">@openMatch.getHoster().getName()</a>
+	        <button onclick='loadContentFrom("/join/@id")' class="list-group-item">@openMatch.getHoster().getName()</button>
 	        }
 		</div>
 		<div class="col-md-6 text-center margin-top-75" >
-		   <a href="/create/Multi" class="btn btn-default">Create multiplayergame</a>
+		   <button onclick='loadContentFrom("/create/Multi")' class="btn btn-default">Create multiplayergame</button>
 		</div>
 		<div class="col-md-6 text-center margin-top-75">
-		   <a href="/create/Single" class="btn btn-default">Start singleplayergame</a>
+		   <button onclick='loadContentFrom("/create/Single")' class="btn btn-default">Start singleplayergame</button>
 	    </div>
     </div>
+    
+    <script type='text/javascript' src='@routes.Assets.at("javascripts/ws.js")'></script>
 }

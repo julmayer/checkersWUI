@@ -11,9 +11,9 @@ public class Match implements Observer {
 	private final String id;
 	
 	public Match(IGameController gameController, Player hoster) {
+		this.hoster = hoster;
 		this.gameController = gameController;
 		this.gameController.addObserver(this);
-		this.hoster = hoster;
 		this.id = Integer.toHexString(System.identityHashCode(gameController));
 	}
 	
@@ -23,6 +23,10 @@ public class Match implements Observer {
 	
 	public Player getHoster() {
 		return this.hoster;
+	}
+	
+	public Player getJoiner() {
+		return this.joiner;
 	}
 	
 	public IGameController getGameController() {
@@ -36,7 +40,9 @@ public class Match implements Observer {
 	@Override
 	public void update() {
 		// Diese Methode wird vom Controller aufgerufen, wenn es was zu aktualisieren gibt
-		// TODO inform players with websocket
-		
+		hoster.reload();
+		if (joiner != null){
+			joiner.reload();
+		}
 	}
 }
