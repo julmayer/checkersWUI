@@ -8,13 +8,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import jdk.nashorn.internal.ir.RuntimeNode.Request;
 import model.Match;
 import model.Player;
 import play.api.mvc.Session;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Cookie;
-import play.mvc.Result;
 import play.mvc.*;
 import play.mvc.WebSocket.*;
 import play.libs.F.Callback;
@@ -34,94 +34,90 @@ import de.htwg.checkers.view.gui.GameFrame;
 import de.htwg.checkers.view.tui.TUI;
 
 public class Application extends Controller {
-	private static IGameController gameController;
 	private static GameFrame gui;
 	private static TUI tui;
 	private static Map<String, Match> openMatches = new HashMap<String, Match>();
 	private static Map<String, Match> runningMatches = new HashMap<String, Match>();
-	private static final String COOKIE_NAME = "CheckersID";
+	private static final String COOKIE_MATCH_ID = "CheckersMatchID";
+	private static final String COOKIE_PLAYER_ID = "CheckersPlayerID";
+	private static int playerCount = 0;
+	private static Map<Integer, Player> playerMap = new HashMap<>();
 
-	public static Result sPlayGame() {
-		gameController = new GameController();
-		return playGame(8, true, Bot.SIMPLE_BOT.ordinal(), gameController);
-	}
+//	public static Result sPlayGame() {
+//		gameController = new GameController();
+//		return playGame(8, true, Bot.SIMPLE_BOT.ordinal(), gameController);
+//	}
 
-	public static Result gamecenter() {
+	public synchronized static Result gamecenter() {
+		String count = String.valueOf(playerCount);
+		setCookieID(COOKIE_PLAYER_ID,count);
+		Player player = new Player(playerCount, request().remoteAddress());
+		playerMap.put(playerCount, player);
+		playerCount++;
 		return ok(views.html.gamecenter.render(openMatches));
 	}
 
 	public static Result join(String matchId) {
-		// ToDO check for nullpointer Exception, looks like match == null
 		System.out.println("join: " + matchId);
 		Match match = openMatches.remove(matchId);
 		System.out.println("foundc match: " + match);
-		Player joiner = new Player(request().remoteAddress(), 2);
-		match.join(joiner);
+		
+		String playerID = request().cookie(COOKIE_PLAYER_ID).value();
+		
+		//Player joiner = new Player(request().remoteAddress(), 2);
+		match.join(playerMap.get(Integer.parseInt(playerID)));
+		
 		runningMatches.put(match.getId(), match);
 
-		String id = generateId(match, joiner);
-		System.out.println("create cookie with: " + id);
-		setCookieID(id);
-		return playGame(8, true, 0, match.getGameController());
+		System.out.println("create cookie with: " + matchId);
+		setCookieID(COOKIE_MATCH_ID,matchId);
+		return playGame(8, true, 0, match);
 	}
 
 	public static Result create(String type) {
-		// TODO generate Websocket and assign it to player
-
-		Match match = new Match(new GameController(), new Player(request()
-				.remoteAddress(), 1));
+		
+		String playerID = request().cookie(COOKIE_PLAYER_ID).value();
+		//playerList.get(Integer.parseInt(playerID));
+		
+		Match match = new Match(new GameController(), playerMap.get(Integer.parseInt(playerID)));
 		System.out.println("new Match = " + match.getId());
 
-		String id = generateId(match, match.getHoster());
+		String id = match.getId();
 		System.out.println("GameId = " + id);
 
-		setCookieID(id);
+		setCookieID(COOKIE_MATCH_ID,id);
 		
 		Result result;
 		if (type.equals("Multi")) {
 			System.out.println("Open Match");
 			openMatches.put(match.getId(), match);
-			result = renderPage(match.getGameController());
+			result = renderPage(match);
 		} else {
 			System.out.println("start Single");
 			runningMatches.put(match.getId(), match);
-			result = playGame(8, false, 0, match.getGameController());
+			result = playGame(8, false, 0, match);
 		}
 
 		return result;
 	}
 
-	private static void setCookieID(String id) {
-		response().setCookie(COOKIE_NAME, id);
-	}
-
-	private static String generateId(Match match, Player player) {
-		StringBuilder buildId = new StringBuilder();
-		buildId.append(match.getId());
-		buildId.append("_");
-		buildId.append(player.getId());
-
-		return buildId.toString();
+	private static void setCookieID(String cookie, String id) {
+		response().setCookie(cookie, id);
 	}
 
 	public static Result refresh() {
-		String checkersId = request().cookie(COOKIE_NAME).value();
-		System.out.println("Refresh from " + checkersId);
-		String[] ids = checkersId.split("_");
-		Match match = runningMatches.get(ids[0]);
+		String matchID = request().cookie(COOKIE_MATCH_ID).value();
+		System.out.println("Refresh from " + matchID);
+		Match match = runningMatches.get(matchID);
 		if (match == null) {
-			match = openMatches.get(ids[0]);
+			match = openMatches.get(matchID);
 		}
-		return renderPage(match.getGameController());
+		return renderPage(match);
 	}
 
 	public static Result playGame(int size, boolean multiplayer,
-			int difficulty, IGameController gameController) {
+		int difficulty, Match currentMatch) {
 		Injector injector = Guice.createInjector(new CheckersModule());
-		// gameController = injector.getInstance(IGameController.class);
-		// gui = injector.getInstance(GameFrame.class);
-		// tui = injector.getInstance(TUI.class);
-		// gameController.gameInit(size, multiplayer, Bot.valueOf(difficulty));
 		StringBuilder buildInput = new StringBuilder();
 		buildInput.append(size);
 		if (multiplayer) {
@@ -130,50 +126,41 @@ public class Application extends Controller {
 			buildInput.append(" S ");
 		}
 		buildInput.append(difficulty);
-		gameController.input(buildInput.toString());
-		return renderPage(gameController);
+		currentMatch.getGameController().input(buildInput.toString());
+		return renderPage(currentMatch);
 	}
 
 	public static Result input(String move) {
-		String checkersId = request().cookie(COOKIE_NAME).value();
-		System.out.println("Input from " + checkersId);
-		String[] ids = checkersId.split("_");
-		Match match = runningMatches.get(ids[0]);
-		if ((match.getGameController().isBlackTurn() && ids[1].equals("1"))
-				|| (!match.getGameController().isBlackTurn() && ids[1]
-						.equals("2"))) {
+		String matchId = request().cookie(COOKIE_MATCH_ID).value();
+		String playerId = request().cookie(COOKIE_PLAYER_ID).value();
+		System.out.println("Input from " + playerId);
+		Match match = runningMatches.get(matchId);
+		Player player = playerMap.get(Integer.parseInt(playerId));
+		
+		if ((match.getGameController().isBlackTurn() && match.getHoster().equals(player) )
+				|| (!match.getGameController().isBlackTurn() && match.getJoiner().equals(player))) {
 			System.out.println("Player is on Turn");
 			match.getGameController().input(move);
 		} else {
 			System.out.println("It's NOT your turn");
 		}
 
-		return renderPage(match.getGameController());
+		return renderPage(match);
 	}
 
-	private static Result renderPage(IGameController gameController) {
-		String player;
-		if (request().cookie(COOKIE_NAME) == null) {
-			// first request, cookie not yet delivered but is in response.
-			for (Cookie cookie : response().cookies()) {
-				if (cookie.name().equals(COOKIE_NAME)) {
-					player = cookie.value();
-				}
-			}
-			player = "Unknown";
-		} else {
-			String checkersId = request().cookie(COOKIE_NAME).value();
-			String[] ids = checkersId.split("_");
-			player = ids[1];
-		}
+	private static Result renderPage(Match currentMatch) {
 		Result result;
+		IGameController gameController = currentMatch.getGameController();
 		if (gameController.getCurrentState() == State.RUNNING) {
+			String playerId = request().cookie(COOKIE_PLAYER_ID).value();
+			Player player = playerMap.get(Integer.parseInt(playerId));
+			
 			List<List<String>> data = updateData(gameController.getField()
 					.getField());
 
 			String nextPlayer = "Wait for opponent.";
-			if ((gameController.isBlackTurn() && player.equals("1"))
-					|| (!gameController.isBlackTurn() && player.equals("2"))) {
+			if ((gameController.isBlackTurn() && currentMatch.getHoster().equals(player) )
+					|| (!gameController.isBlackTurn() && currentMatch.getJoiner().equals(player))) {
 				nextPlayer = "Your turn";
 			}
 
@@ -221,49 +208,19 @@ public class Application extends Controller {
 	public static Result index() {
 		return ok(views.html.index.render());
 	}
-
-
+	
 	public static WebSocket<String> socket() {
 		
+		String playerID = request().cookie(COOKIE_PLAYER_ID).value();
+		System.out.println("Websocket from PlayerID:" + playerID);
 		
-		return new WebSocket<String>() {
-			public void onReady(WebSocket.In<String> in,final WebSocket.Out<String> out) {
-				//set in and out to player
-				
-				
-				
-				in.onMessage(new Callback<String>() {
-					public void invoke(String event) {
-						System.out.println(event);
-						// input(event);
-						// out.write("newField");
-						// out.write("Server-Received: " + event);
-						out.write("test");
-					}
-				});
-
-				in.onClose(new Callback0() {
-					public void invoke() {
-						System.out.println("Closed");
-					}
-				});
-
-				// out.write("Hello Client, you can send messages now!");
-			}
-
-		};
+		return playerMap.get(Integer.parseInt(playerID)).getWebsocket();
+		//return playerList.get(Integer.parseInt(playerID)).getWebsocket();
 		
-		
-		/*
-		// System.out.println("----------------"+request().remoteAddress());
-		String checkersId = request().cookie(COOKIE_NAME).value();
-		System.out.println("Websocket from " + checkersId);
-		String[] ids = checkersId.split("_");
-		// 0 = match
-		// 1 = player
-		Match match = runningMatches.get(ids[0]);
-
-		return match.getHoster().getWebSocket();
-		*/
 	}
+	
+	/*private static boolean isYourTurn(){
+		//todo
+		return null;
+	}*/
 }
