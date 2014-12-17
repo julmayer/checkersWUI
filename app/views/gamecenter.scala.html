@@ -3,7 +3,7 @@
 @main("Welcome to checkers") {
     <div class="col-md-12">
 	    <h2>Open games</h2>
-	    <div class="list-group">
+	    <div id="gameList" class="list-group">
             @if(openMatches.isEmpty) {
              <a href="#" class="list-group-item disabled">
             No open games, please create a new game.

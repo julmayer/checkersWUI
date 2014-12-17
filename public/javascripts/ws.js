@@ -16,15 +16,17 @@ $(function() {
     
     ws.onclose = function()
     { 
-       // websocket is closed.
-       //alert("Connection is closed..."); 
+    	// websocket is closed.
+    	document.cookie = "checkersPlayerID" + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    	alert("Connection is closed..."); 
     };
     
     ws.onmessage = function (evt) { 
         var received_msg = evt.data;
         //alert("Received: "+evt.data);
         
-        $("#content").load("/refresh #content");
+    	$("#content").load(evt.data + " #content")
+        
         
         /*if(evt.data == "BLABLA"){
         	$("#content").load("/refresh #content");

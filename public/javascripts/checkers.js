@@ -1,3 +1,3 @@
-function loadContentFrom(url){
+function loadContentFrom(url) {
 	$('#content').load(url + " #content");
 }

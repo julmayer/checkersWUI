@@ -59,7 +59,11 @@ public class Player {
 	}
 	
 	public void reload(){
-		outStream.write("update");
+		reload("/refresh");
+	}
+
+	public void reload(String url){
+		outStream.write(url);
 	}
 
     @Override
