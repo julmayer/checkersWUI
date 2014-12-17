@@ -2,7 +2,7 @@
 
 @main("Play the game") {
 
-    <div class="col-md-6">
+    <div class="col-md-6 col-xs-12">
         <div class="field" id="field">
             @for((row, rId) <- data.zipWithIndex) {
 	        <div class="myRow @if(rId%2==0) {Even} else {Odd}" id="myRow-@rId">
@@ -29,7 +29,7 @@
             }
         </div>
     </div>
-    <div class="gameMessages col-md-6 text-center">
+    <div class="gameMessages col-md-6 col-xs-12 text-center">
         <div id="nextPlayerDiv">
             <p>@nextPlayer</p>
             <div class=" text-center turnIconContainer">

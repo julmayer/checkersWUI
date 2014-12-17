@@ -9,6 +9,7 @@ import java.util.Map;
 import model.Match;
 import model.Player;
 import play.mvc.Controller;
+import play.mvc.Http.Cookie;
 import play.mvc.Result;
 import play.mvc.WebSocket;
 import de.htwg.checkers.controller.GameController;
@@ -85,6 +86,7 @@ public class Application extends Controller {
 
 	public static Result refresh() {
 	    Match currentMatch = getCurrentMatch();
+	    System.out.println("Refresh from " + getCurrentPlayer() + " for match " + currentMatch);
 		return renderPage(currentMatch);
 	}
 
@@ -120,8 +122,22 @@ public class Application extends Controller {
 
 	private static Result renderPage(Match currentMatch) {
 		Result result;
-		IGameController gameController = currentMatch.getGameController();
-		if (gameController.getCurrentState() == State.RUNNING) {
+		IGameController gameController = null;
+		
+		if (currentMatch != null) {
+		    gameController = currentMatch.getGameController();
+		}
+		
+		if (gameController == null) {
+		    result = ok(views.html.waitGame.render("Wait for creation of game"));
+		    getCurrentPlayer().reload();
+		} else if (gameController.getCurrentState() != State.RUNNING) {
+		    result = ok(views.html.waitGame.render("Wait for other player"));
+		} else if (gameController.checkIfWin()) {
+		    runningMatches.remove(currentMatch);
+		    response().discardCookie(COOKIE_MATCH_ID);
+		    result = ok(views.html.finish.render(gameController.getInfo()));
+	    } else {
 			Player player = getCurrentPlayer();
 			
 			List<List<String>> data = updateData(gameController.getField()
@@ -139,9 +155,8 @@ public class Application extends Controller {
 
 			result = ok(views.html.playGame.render(data, data.size(),
 					nextPlayer, error));
-		} else {
-			result = ok(views.html.waitGame.render());
-		}
+	    }
+	
 		return result;
 	}
 
@@ -191,7 +206,19 @@ public class Application extends Controller {
 	}
 	
 	private static Match getCurrentMatch() {
-	    String matchID = request().cookie(COOKIE_MATCH_ID).value();
+	    String matchID = null;
+	    Cookie requestCookie= request().cookie(COOKIE_MATCH_ID);
+	    if (requestCookie != null) {
+	        matchID = requestCookie.value();
+	    } else {
+	        // first request, cookie wasn't set yet
+	        for (Cookie cookie : response().cookies()) {
+	            if (cookie.name() == COOKIE_MATCH_ID) {
+	                matchID = cookie.value();
+	                break;
+	            }
+	        }
+	    }
         Match match = runningMatches.get(matchID);
         if (match == null) {
             match = openMatches.get(matchID);

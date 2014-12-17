@@ -2,7 +2,11 @@ var ws;
 
 $(function() {
 	//create websocket
-	ws = new WebSocket("wss://"+window.document.location.host+"/socket");
+	if (window.location.protocol == "https:") {
+		ws = new WebSocket("wss://"+window.document.location.host+"/socket");
+	} else {
+		ws = new WebSocket("ws://"+window.document.location.host+"/socket");
+	}
 	
 	ws.onopen = function() {
         // Web Socket is connected, send data using send()
