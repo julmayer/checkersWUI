@@ -3,8 +3,11 @@ package controllers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import model.Match;
 import model.Player;
@@ -24,12 +27,14 @@ public class Application extends Controller {
 	private static final String COOKIE_PLAYER_ID = "CheckersPlayerID";
 	private static int playerCount = 0;
 	private static Map<Integer, Player> playerMap = new HashMap<>();
+	private static List<Player> playerListIdle = new LinkedList<>();
 
     public synchronized static Result gamecenter() {
         String playerId = String.valueOf(playerCount);
         setCookieID(COOKIE_PLAYER_ID, playerId);
         Player player = new Player(playerCount, request().remoteAddress());
         playerMap.put(playerCount, player);
+        playerListIdle.add(player);
         playerCount++;
         return ok(views.html.gamecenter.render(openMatches));
     }
@@ -52,6 +57,7 @@ public class Application extends Controller {
 
 		System.out.println("create cookie with: " + matchId);
 		setCookieID(COOKIE_MATCH_ID,matchId);
+		playerListIdle.remove(joiner);
 		return playGame(8, true, 0, match);
 	}
 
@@ -76,7 +82,18 @@ public class Application extends Controller {
             }
 			result = playGame(8, false, 0, match);
 		}
-
+		
+		System.out.println("hoster: "+hoster);
+				
+		
+		System.out.println(playerListIdle.remove(hoster));
+		
+		for (Player player : new LinkedList<Player>(playerListIdle)){
+			System.out.println(player);
+			player.reload("/play");
+		}
+		
+		
 		return result;
 	}
 
@@ -146,7 +163,7 @@ public class Application extends Controller {
 			List<List<String>> data = updateData(gameController.getField()
 					.getField());
 
-			String nextPlayer = "Wait for opponent.";
+			String nextPlayer = "Waiting for opponent.";
 			if (isPlayerOnTurn(player, currentMatch)) {
 				nextPlayer = "Your turn";
 			}
@@ -155,9 +172,13 @@ public class Application extends Controller {
 			if (gameController.getError() != null) {
 				error = gameController.getError();
 			}
-
+			
+			int moveCount = gameController.getMoveCount();
+			
+			boolean playerIsBlack = currentMatch.getHoster().equals(player);
+			
 			result = ok(views.html.playGame.render(data, data.size(),
-					nextPlayer, error));
+					nextPlayer, error, moveCount, playerIsBlack));
 	    }
 	
 		return result;

@@ -1,4 +1,4 @@
-@(data: List[List[String]], size: Int, nextPlayer: String, error: String)
+@(data: List[List[String]], size: Int, nextPlayer: String, error: String, moveCount: Int, playerIsBlack: Boolean)
 
 @main("Play the game") {
 
@@ -29,17 +29,21 @@
             }
         </div>
     </div>
-    <div class="gameMessages col-md-6 col-xs-12 text-center">
-        <div id="nextPlayerDiv">
+    <div class="gameMessages col-md-6 col-xs-12 text-center row">
+        <div id="nextPlayerDiv" class="col-md-6 col-xs-12">
             <p>@nextPlayer</p>
             <div class=" text-center turnIconContainer">
-	            @if(nextPlayer=="Black") {
+                <p> Your are: <p>
+	            @if(playerIsBlack) {
 	                <div class="turnIcon" style="background-color:black"></div>
 	            }
-	            @if(nextPlayer=="White") {
+	            @if(!playerIsBlack) {
 	                <div class="turnIcon" style="background-color:white"></div>
 	            }
 	        </div>
+        </div>
+        <div id="moveCountDiv" class="col-md-6 col-xs-12">
+            <p>Overall number of moves: @moveCount </p>
         </div>
         @if(!error.isEmpty) {
         <div id="errorDiv" >

@@ -99,12 +99,17 @@ img{
 #errorDiv{
 	clear:both;
 	font-size:20px;
-	margin-top:25px;
+	position: relative;
+    top: 25px;
 }
 
 #nextPlayerDiv{
     clear:both;
     font-size:20px;
+}
+
+#moveCountDiv{
+	font-size:20px;
 }
 
 div.Even span.Even {

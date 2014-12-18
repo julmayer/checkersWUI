@@ -5,7 +5,7 @@ var toX;
 var toY;
 var clickCount = 0;
 
-//$(function() {
+$(function() {
 
 	$("#content").on("click",".myCell",function(event) {
 		if(clickCount == 0){
@@ -21,7 +21,7 @@ var clickCount = 0;
 		}
     });
 	
-//});
+});
 
 function drag(event){
 	fromX = decodePosition(event.target.id, "x");
