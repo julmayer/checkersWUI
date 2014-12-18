@@ -134,7 +134,10 @@ public class Application extends Controller {
 		} else if (gameController.getCurrentState() != State.RUNNING) {
 		    result = ok(views.html.waitGame.render("Wait for other player"));
 		} else if (gameController.checkIfWin()) {
-		    runningMatches.remove(currentMatch);
+		    currentMatch.leave();
+		    if (currentMatch.isEmpty()) {
+		        openMatches.remove(currentMatch);
+		    }
 		    response().discardCookie(COOKIE_MATCH_ID);
 		    result = ok(views.html.finish.render(gameController.getInfo()));
 	    } else {

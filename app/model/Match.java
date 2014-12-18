@@ -9,6 +9,7 @@ public class Match implements Observer {
 	private Player hoster;
 	private Player joiner;
 	private final String id;
+	private Integer playerCounter;
 	
 	public Match(IGameController gameController, Player hoster) {
 		this.hoster = hoster;
@@ -18,7 +19,20 @@ public class Match implements Observer {
 	}
 	
 	public void join(Player joiner) {
+	    synchronized (playerCounter) {
+	        ++playerCounter;
+        }
 		this.joiner = joiner;
+	}
+	
+	public void leave() {
+	    synchronized (playerCounter) {
+	        --playerCounter;
+        }
+	}
+	
+	public synchronized boolean isEmpty() {
+	    return playerCounter.intValue() == 0;
 	}
 	
 	public Player getHoster() {
