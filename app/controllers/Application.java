@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 import model.Match;
 import model.Player;
+import play.Logger;
+import play.libs.F.Callback0;
 import play.mvc.Controller;
 import play.mvc.Http.Cookie;
 import play.mvc.Result;
@@ -29,72 +29,91 @@ public class Application extends Controller {
 	private static Map<Integer, Player> playerMap = new HashMap<>();
 	private static List<Player> playerListIdle = new LinkedList<>();
 
-    public synchronized static Result gamecenter() {
-        String playerId = String.valueOf(playerCount);
-        setCookieID(COOKIE_PLAYER_ID, playerId);
-        Player player = new Player(playerCount, request().remoteAddress());
-        playerMap.put(playerCount, player);
-        playerListIdle.add(player);
-        playerCount++;
+    public static Result gamecenter() {
+        Player player = getCurrentPlayer();
+        // if player has no cookie or it is expired, create new player
+        if (player == null) {
+            synchronized (playerMap) {
+                String playerId = String.valueOf(playerCount);
+                player = new Player(playerCount, request().remoteAddress());
+                setCookieID(COOKIE_PLAYER_ID, playerId);
+                createWebSocketForPlayer(player);
+                playerMap.put(playerCount, player);
+                playerListIdle.add(player);
+                playerCount++;
+            }
+            Logger.info("Created new " + player);
+        } else {
+            Logger.debug(player + " in gamecenter");
+        }
+        
+        if (!playerListIdle.contains(player)) {
+            player.setMatch(null);
+            
+            // Player has reload the page or came from a match, now idle again.
+            playerListIdle.add(player);
+            Logger.debug(player + " is now idle again");
+        }
+        
         return ok(views.html.gamecenter.render(openMatches));
     }
 
 	public static Result join(String matchId) {
-		System.out.println("join: " + matchId);
 		Match match;
 		synchronized (openMatches) {
 		    match = openMatches.remove(matchId);
         }
-		System.out.println("found match: " + match);
 		
 		Player joiner = getCurrentPlayer();
-		System.out.println(joiner + " is joining game");
 		match.join(joiner);
 		
 		synchronized (runningMatches) {
 		    runningMatches.put(match.getId(), match);
         }
 
-		System.out.println("create cookie with: " + matchId);
 		setCookieID(COOKIE_MATCH_ID,matchId);
-		playerListIdle.remove(joiner);
+		synchronized (playerListIdle) {
+		    playerListIdle.remove(joiner);
+        }
+		Logger.info(joiner + " joined " + match);
 		return playGame(8, true, 0, match);
 	}
 
 	public static Result create(String type) {
 		Player hoster = getCurrentPlayer();
 		Match match = new Match(new GameController(), hoster);
-		System.out.println("new Match = " + match.getId() + " hostet by " + hoster);
 
 		setCookieID(COOKIE_MATCH_ID, match.getId());
 		
 		Result result;
 		if (type.equals("Multi")) {
-			System.out.println("Open Match");
 			synchronized (openMatches) {
 			    openMatches.put(match.getId(), match);
             }
+			Logger.info(hoster + " create multiplayer game " + match);
 			result = renderPage(match);
 		} else {
-			System.out.println("start Single");
 			synchronized (runningMatches) {
 			    runningMatches.put(match.getId(), match);
             }
+			Logger.info(hoster + " created singleplayer game " + match);
 			result = playGame(8, false, 0, match);
 		}
 		
-		System.out.println("hoster: "+hoster);
-				
+		// remove hoster from ide players
+		playerListIdle.remove(hoster);
 		
-		System.out.println(playerListIdle.remove(hoster));
-		
-		for (Player player : new LinkedList<Player>(playerListIdle)){
-			System.out.println(player);
-			player.reload("/play");
-		}
-		
+		informIdlePlayer();
 		
 		return result;
+	}
+	
+	private static void informIdlePlayer() {
+	    // inform all idle player of new multiplayer game
+        for (Player player : new LinkedList<Player>(playerListIdle)){
+            Logger.debug("Refresh idle " + player);
+            player.reload("/play");
+        }
 	}
 
 	private static void setCookieID(String cookie, String id) {
@@ -103,7 +122,7 @@ public class Application extends Controller {
 
 	public static Result refresh() {
 	    Match currentMatch = getCurrentMatch();
-	    System.out.println("Refresh from " + getCurrentPlayer() + " for match " + currentMatch);
+	    Logger.debug(getCurrentPlayer() + " asks for refresh of " + currentMatch);
 		return renderPage(currentMatch);
 	}
 
@@ -125,13 +144,8 @@ public class Application extends Controller {
 		Match match = getCurrentMatch();
 		Player player = getCurrentPlayer();
 
-		System.out.println("Input from " + player + " for match " + match);
-		
 		if (isPlayerOnTurn(player, match)) {
-		    System.out.println("Player is on Turn");
 		    match.getGameController().input(move);
-		} else {
-		    System.out.println("It's NOT your turn");
 		}
 		
 		return renderPage(match);
@@ -153,7 +167,7 @@ public class Application extends Controller {
 		} else if (gameController.checkIfWin()) {
 		    currentMatch.leave();
 		    if (currentMatch.isEmpty()) {
-		        openMatches.remove(currentMatch);
+		        runningMatches.remove(currentMatch);
 		    }
 		    response().discardCookie(COOKIE_MATCH_ID);
 		    result = ok(views.html.finish.render(gameController.getInfo()));
@@ -174,7 +188,6 @@ public class Application extends Controller {
 			}
 			
 			int moveCount = gameController.getMoveCount();
-			
 			boolean playerIsBlack = currentMatch.getHoster().equals(player);
 			
 			result = ok(views.html.playGame.render(data, data.size(),
@@ -216,15 +229,58 @@ public class Application extends Controller {
 		return ok(views.html.index.render());
 	}
 	
+	private static synchronized void createWebSocketForPlayer(final Player player) {
+	    Logger.debug("Create WebSocker for " + player);
+	    WebSocket<String> ws = new WebSocket<String>() {
+            public void onReady(WebSocket.In<String> in,final WebSocket.Out<String> out) {
+                player.setOutStream(out);
+                
+                in.onClose(new Callback0() {
+                    public void invoke() {
+                        // Player has left. Remove player
+                        Logger.debug("WebSocket of " + player + " is closed");
+                        Application.removePlayer(player);
+                    }
+                });
+            }
+        };
+        player.setWebSocket(ws);
+	}
+	
+	private static synchronized void removePlayer(Player player) {
+	    Logger.debug("remove " + player + " from playerMap");
+        playerMap.remove(player.getId());
+	    
+	    if (!playerListIdle.remove(player)) {
+	        Logger.debug(player + " gave up");
+	        // playe who left wasn't idle, kick him out of match
+	        player.giveUp();
+	        Logger.debug("after give up");
+	        Match match = player.getMatch();
+	        Logger.debug("check if match is empty " + match);
+	        if (match != null && match.isEmpty()) {
+	            Logger.debug("remove empty match and inform idle Player");
+	            Match removed = openMatches.remove(match.getId());
+	            Logger.debug("removed " + removed);
+	            Logger.debug("Number of open matches: " + openMatches.size());
+	            informIdlePlayer();
+	        }
+	    }
+	}
+	
 	public static WebSocket<String> socket() {
 	    Player currentPlayer = getCurrentPlayer();
-		System.out.println("Websocket from Player:" + currentPlayer);
-		
+	    Logger.debug(currentPlayer + " asks for socket");
 		return currentPlayer.getWebsocket();
 	}
 	
 	private static Player getCurrentPlayer() {
-	    String playerId = request().cookie(COOKIE_PLAYER_ID).value();
+	    String playerId;
+	    try {
+	        playerId = request().cookie(COOKIE_PLAYER_ID).value();
+	    } catch (NullPointerException e)  {
+	        return null;
+	    }
 	    Integer playerIdKey = Integer.parseInt(playerId);
 	    return playerMap.get(playerIdKey);
 	}

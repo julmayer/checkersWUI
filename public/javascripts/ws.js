@@ -8,28 +8,27 @@ $(function() {
 		ws = new WebSocket("ws://"+window.document.location.host+"/socket");
 	}
 	
+	//expire player cookie if user closes window 
+	window.onbeforeunload = function() {
+		ws.onclose = function(){};
+		document.cookie = "CheckersPlayerID" + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+		ws.close();
+	};
+	
 	ws.onopen = function() {
         // Web Socket is connected, send data using send()
-        //ws.send("Hello Server here is the client");
-        //alert("socket is open");
     };
     
     ws.onclose = function()
     { 
-    	// websocket is closed.
-    	document.cookie = "checkersPlayerID" + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    	alert("Connection is closed..."); 
+    	// websocket is closed, discard cookie.
+    	document.cookie = "CheckersPlayerID" + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     };
     
     ws.onmessage = function (evt) { 
-        var received_msg = evt.data;
-        //alert("Received: "+evt.data);
+    	// load content of given page
+    	var received_msg = evt.data;
         
-    	$("#content").load(evt.data + " #content")
-        
-        
-        /*if(evt.data == "BLABLA"){
-        	$("#content").load("/refresh #content");
-    	}*/
+    	$("#content").load(received_msg + " #content")
     };
 });
