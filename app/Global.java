@@ -9,7 +9,9 @@ public class Global extends GlobalSettings {
     public void onStart(final Application app) {
       Logger.info("Application has started");
       // OAuth
-      final Google2Client googleClient = new Google2Client("564983107101-7lgkkdcv4t5fq0g9c5h93deapu89elnm.apps.googleusercontent.com", "6MjDi0CU910R5o2xZalUiQyl");
+      final Google2Client googleClient = new Google2Client(
+              "564983107101-9dab0njruqo53lrjvf9kvq50sjgrggi9.apps.googleusercontent.com",
+              "NeaA_m9GY-ecQ3LJgIyawrnj");
 
       final Clients clients = new Clients("https://htwg-checkers.herokuapp.com/callback", googleClient);
       Config.setClients(clients);
