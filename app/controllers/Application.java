@@ -36,7 +36,11 @@ public class Application extends JavaController {
 	private static List<Player> playerListIdle = new LinkedList<>();
 	
     public static Result gamecenter() {
-    	
+        CommonProfile googleProfile = getUserProfile();
+        Logger.debug("gamecenter Google Profile: " + googleProfile);
+        if (googleProfile != null) {
+            Logger.debug("Firstname " + googleProfile.getFirstName() + " Lastname " + googleProfile.getFamilyName());
+        }
     	//check if user is logged in
     	if(session("loggedIn") != null){
     		
