@@ -207,6 +207,9 @@ public class Application extends JavaController {
 			String error = "";
 			if (gameController.getError() != null) {
 				error = gameController.getError();
+				if(!isPlayerOnTurn(player, currentMatch)){
+					error = "";
+				}
 			}
 			
 			int moveCount = gameController.getMoveCount();
