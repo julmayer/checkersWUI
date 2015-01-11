@@ -1,0 +1,23 @@
+@main("Login") {
+
+<div>
+    <h1>Login</h1>
+</div>
+
+<div class="margin-top-75 col-xs-12">
+    <p>You are not logged in. You need to login to be able to play the game</p>
+        
+    
+    <form method="post" action="@routes.Application.loginSubmit()">
+        <input type="text" name="username" /><br />
+        <input type="password" name="password" /><br />
+        
+        <input type="submit" value="Login" /><br />
+    </form>
+    
+    
+</div>
+
+
+
+}
