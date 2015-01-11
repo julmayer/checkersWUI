@@ -74,7 +74,7 @@ public class Application extends JavaController {
 	        return ok(views.html.gamecenter.render(openMatches));
 	        
     	} else {
-    	    String url = getRedirectAction("Google2Client", "/?0").getLocation();
+    	    String url = getRedirectAction("Google2Client").getLocation();
     		return ok(views.html.login.render(url));
     	}
     }
@@ -361,7 +361,8 @@ public class Application extends JavaController {
 			return gamecenter();
 		}
 		
-		return ok(views.html.login.render());
+		String url = getRedirectAction("Google2Client").getLocation();
+		return ok(views.html.login.render(url));
 	}
 
 }
