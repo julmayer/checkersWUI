@@ -5,19 +5,20 @@
     <h1>Login</h1>
 </div>
 
-<div class="margin-top-75 col-xs-12">
+<div class="margin-top-75 text-center col-xs-12">
     <p>You are not logged in. You need to login to be able to play the game</p>
-        
     
-    <form method="post" action="@routes.Application.loginSubmit()">
-        <input type="text" name="username" /><br />
-        <input type="password" name="password" /><br />
+    <div class="col-md-6 margin-top-75" >
+       <form method="post" action="@routes.Application.loginSubmit()">
+        <input type="text" name="username" value="Username" /><br />
+        <input type="password" name="password" value="Password" /><br />
         
         <input type="submit" value="Login" /><br />
     </form>
-    
-    <a href="@url"><img alt="Sign in with google" src="https://developers.google.com/accounts/images/sign-in-with-google.png" ></a>
-    
+    </div>
+    <div class="col-md-6 margin-top-75">
+       <a href="@url"><img alt="Sign in with google" style="width:200px" src="https://developers.google.com/accounts/images/sign-in-with-google.png" ></a>
+    </div>
     
 </div>
 

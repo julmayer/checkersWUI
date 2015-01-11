@@ -17,6 +17,7 @@ import org.pac4j.play.java.RequiresAuthentication;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.libs.F.Callback;
 import play.libs.F.Callback0;
 import play.mvc.Http.Cookie;
 import play.mvc.Result;
@@ -181,10 +182,10 @@ public class Application extends JavaController {
 		}
 		
 		if (gameController == null) {
-		    result = ok(views.html.waitGame.render("Wait for creation of game"));
+		    result = ok(views.html.waitGame.render("Waiting for creation of game"));
 		    getCurrentPlayer().reload();
 		} else if (gameController.getCurrentState() != State.RUNNING) {
-		    result = ok(views.html.waitGame.render("Wait for other player"));
+		    result = ok(views.html.waitGame.render("Waiting for other player"));
 		} else if (gameController.checkIfWin()) {
 		    currentMatch.leave();
 		    if (currentMatch.isEmpty()) {
@@ -270,6 +271,15 @@ public class Application extends JavaController {
                         Application.removePlayer(player);
                     }
                 });
+                in.onMessage(new Callback<String>() {
+                    public void invoke(String event) {
+	                    // Log events to the console
+                    	//getCurrentPlayer().setWantedGameName(event);
+                    	Logger.info(player + " has sent gamename:" + event);   
+                    	player.setWantedGameName(event);
+                    } 
+                });
+                
             }
         };
         player.setWebSocket(ws);

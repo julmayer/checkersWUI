@@ -3,20 +3,23 @@
 @main("Welcome to checkers") {
     <div class="col-md-12">
 	    <h2>Open games</h2>
-	    <div id="gameList" class="list-group">
+	    <div id="gameList" class="list-group margin-top-75">
             @if(openMatches.isEmpty) {
              <a href="#" class="list-group-item disabled">
             No open games, please create a new game.
             </a>
             }
 	        @for((id, openMatch) <- openMatches) {
-	        <button onclick='loadContentFrom("/join/@id")' class="list-group-item">@openMatch.getHoster().getName()</button>
+	        <button onclick='loadContentFrom("/join/@id")' class="list-group-item">@openMatch.getHoster().getWantedGameName()</button>
 	        }
 		</div>
 		<div class="col-md-6 text-center margin-top-75" >
-		   <button onclick='loadContentFrom("/create/Multi")' class="btn btn-default">Create multiplayergame</button>
+		   <p>Please insert a game name in order to create an multiplayer game.</p>
+		   <input type="text" value="" name="gamename" id="gamename">
+		   <button disabled id="createMPButton" onclick='loadContentFrom("/create/Multi")' class="btn btn-default">Create multiplayergame</button>
 		</div>
 		<div class="col-md-6 text-center margin-top-75">
+		   <p>Create and play a singleplayer game against an artificial intelligence</p>
 		   <button onclick='loadContentFrom("/create/Single")' class="btn btn-default">Start singleplayergame</button>
 	    </div>
     </div>

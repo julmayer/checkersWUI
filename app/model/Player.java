@@ -9,11 +9,19 @@ public class Player {
 	private WebSocket<String> webSocket;
 	private WebSocket.Out<String> outStream;
 	private Match match;
-	
+	private String wantedGameName;
 	
 	public Player(int id, String name) {
 		this.name = name;
 		this.id = id;
+	}
+	
+	public void setWantedGameName(String wantedGameName){
+		this.wantedGameName = wantedGameName;
+	}
+	
+	public String getWantedGameName(){
+		return this.wantedGameName;
 	}
 	
 	public int getId() {
@@ -31,7 +39,7 @@ public class Player {
     public void setOutStream(WebSocket.Out<String> outStream) {
         this.outStream = outStream;
     }
-
+    
     public WebSocket<String> getWebsocket(){
 		return this.webSocket;
 	}

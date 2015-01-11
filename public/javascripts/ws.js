@@ -31,4 +31,8 @@ $(function() {
         
     	$("#content").load(received_msg + " #content")
     };
+    
+    $('#createMPButton').on('click', function() {
+		ws.send($("#gamename").val());
+	});
 });
