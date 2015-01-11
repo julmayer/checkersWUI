@@ -74,7 +74,8 @@ public class Application extends JavaController {
 	        return ok(views.html.gamecenter.render(openMatches));
 	        
     	} else {
-    		return ok(views.html.login.render());
+    	    String url = getRedirectAction("Google2Client", "/?0").getLocation();
+    		return ok(views.html.login.render(url));
     	}
     }
 
@@ -246,12 +247,7 @@ public class Application extends JavaController {
 	}
 
 	public static Result index() {
-	    CommonProfile profile = getUserProfile();
-	    String url = getRedirectAction("Google2Client", "/?0").getLocation();
         return ok(views.html.index.render());
-		 // profile (maybe null if not authenticated)
-		///final CommonProfile profile = getUserProfile();
-		//return ok(views.html.index.render(profile));
 	}
 	
 	@RequiresAuthentication(clientName = "Google2Client")
@@ -359,7 +355,8 @@ public class Application extends JavaController {
 		DynamicForm dF = Form.form().bindFromRequest();
 		System.out.println(dF.get("username")+" logged in with password: "+dF.get("password"));
 		
-		if(dF.get("username").equals("test") && dF.get("password").equals("123")){
+		if ((dF.get("username").equals("test") && dF.get("password").equals("123"))
+		        || getUserProfile() != null) {
 			session("loggedIn","true");
 			return gamecenter();
 		}
