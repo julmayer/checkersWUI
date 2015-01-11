@@ -84,6 +84,7 @@ public class Application extends JavaController {
 		Match match;
 		synchronized (openMatches) {
 		    match = openMatches.remove(matchId);
+		    informIdlePlayer();
         }
 		
 		Player joiner = getCurrentPlayer();
