@@ -1,5 +1,8 @@
 package controllers;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,9 +10,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.FilterRegistration.Dynamic;
+
 import model.Match;
 import model.Player;
 import play.Logger;
+import play.data.DynamicForm;
+import play.data.Form;
 import play.libs.F.Callback0;
 import play.mvc.Http.Cookie;
 import play.mvc.Result;
@@ -33,34 +40,42 @@ public class Application extends JavaController {
 	private static int playerCount = 0;
 	private static Map<Integer, Player> playerMap = new HashMap<>();
 	private static List<Player> playerListIdle = new LinkedList<>();
-
+	
     public static Result gamecenter() {
-        Player player = getCurrentPlayer();
-        // if player has no cookie or it is expired, create new player
-        if (player == null) {
-            synchronized (playerMap) {
-                String playerId = String.valueOf(playerCount);
-                player = new Player(playerCount, request().remoteAddress());
-                setCookieID(COOKIE_PLAYER_ID, playerId);
-                createWebSocketForPlayer(player);
-                playerMap.put(playerCount, player);
-                playerListIdle.add(player);
-                playerCount++;
-            }
-            Logger.info("Created new " + player);
-        } else {
-            Logger.debug(player + " in gamecenter");
-        }
-        
-        if (!playerListIdle.contains(player)) {
-            player.setMatch(null);
-            
-            // Player has reload the page or came from a match, now idle again.
-            playerListIdle.add(player);
-            Logger.debug(player + " is now idle again");
-        }
-        
-        return ok(views.html.gamecenter.render(openMatches));
+    	
+    	//check if user is logged in
+    	if(session("loggedIn") != null){
+    		
+	        Player player = getCurrentPlayer();
+	        // if player has no cookie or it is expired, create new player
+	        if (player == null) {
+	            synchronized (playerMap) {
+	                String playerId = String.valueOf(playerCount);
+	                player = new Player(playerCount, request().remoteAddress());
+	                setCookieID(COOKIE_PLAYER_ID, playerId);
+	                createWebSocketForPlayer(player);
+	                playerMap.put(playerCount, player);
+	                playerListIdle.add(player);
+	                playerCount++;
+	            }
+	            Logger.info("Created new " + player);
+	        } else {
+	            Logger.debug(player + " in gamecenter");
+	        }
+	        
+	        if (!playerListIdle.contains(player)) {
+	            player.setMatch(null);
+	            
+	            // Player has reload the page or came from a match, now idle again.
+	            playerListIdle.add(player);
+	            Logger.debug(player + " is now idle again");
+	        }
+	        
+	        return ok(views.html.gamecenter.render(openMatches));
+	        
+    	} else {
+    		return ok(views.html.login.render());
+    	}
     }
 
 	public static Result join(String matchId) {
@@ -338,4 +353,18 @@ public class Application extends JavaController {
 	    
 	    return playerOnTurn;
     }
+	
+	
+	public static Result loginSubmit(){
+		DynamicForm dF = Form.form().bindFromRequest();
+		System.out.println(dF.get("username")+" logged in with password: "+dF.get("password"));
+		
+		if(dF.get("username").equals("test") && dF.get("password").equals("123")){
+			session("loggedIn","true");
+			return gamecenter();
+		}
+		
+		return ok(views.html.login.render());
+	}
+
 }
