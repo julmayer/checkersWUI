@@ -1,8 +1,5 @@
 package controllers;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,10 +7,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.FilterRegistration.Dynamic;
-
 import model.Match;
 import model.Player;
+
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.play.java.JavaController;
+import org.pac4j.play.java.RequiresAuthentication;
+
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
@@ -25,12 +25,6 @@ import de.htwg.checkers.controller.GameController;
 import de.htwg.checkers.controller.IGameController;
 import de.htwg.checkers.controller.State;
 import de.htwg.checkers.models.Cell;
-
-import org.pac4j.oauth.profile.google2.Google2Profile;
-import org.pac4j.play.java.JavaController;
-import org.pac4j.play.java.RequiresAuthentication;
-import org.pac4j.core.client.RedirectAction;
-import org.pac4j.core.profile.CommonProfile;
 
 public class Application extends JavaController {
 	private static Map<String, Match> openMatches = new HashMap<String, Match>();
@@ -353,10 +347,15 @@ public class Application extends JavaController {
 	
 	public static Result loginSubmit(){
 		DynamicForm dF = Form.form().bindFromRequest();
-		System.out.println(dF.get("username")+" logged in with password: "+dF.get("password"));
+		Logger.debug(dF.get("username")+" logged in with password: "+dF.get("password"));
+		CommonProfile googleProfile = getUserProfile();
+		Logger.debug("Google Profile: " + googleProfile);
+		if (googleProfile != null) {
+		    Logger.debug("Firstname " + googleProfile.getFirstName() + " Lastname " + googleProfile.getFamilyName());
+		}
 		
 		if ((dF.get("username").equals("test") && dF.get("password").equals("123"))
-		        || getUserProfile() != null) {
+		        || googleProfile != null) {
 			session("loggedIn","true");
 			return gamecenter();
 		}
