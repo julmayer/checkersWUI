@@ -11,7 +11,6 @@ import model.Match;
 import model.Player;
 import play.Logger;
 import play.libs.F.Callback0;
-import play.mvc.Controller;
 import play.mvc.Http.Cookie;
 import play.mvc.Result;
 import play.mvc.WebSocket;
@@ -20,7 +19,13 @@ import de.htwg.checkers.controller.IGameController;
 import de.htwg.checkers.controller.State;
 import de.htwg.checkers.models.Cell;
 
-public class Application extends Controller {
+import org.pac4j.oauth.profile.google2.Google2Profile;
+import org.pac4j.play.java.JavaController;
+import org.pac4j.play.java.RequiresAuthentication;
+import org.pac4j.core.client.RedirectAction;
+import org.pac4j.core.profile.CommonProfile;
+
+public class Application extends JavaController {
 	private static Map<String, Match> openMatches = new HashMap<String, Match>();
 	private static Map<String, Match> runningMatches = new HashMap<String, Match>();
 	private static final String COOKIE_MATCH_ID = "CheckersMatchID";
@@ -226,7 +231,19 @@ public class Application extends Controller {
 	}
 
 	public static Result index() {
-		return ok(views.html.index.render());
+	    CommonProfile profile = getUserProfile();
+	    String url = getRedirectAction("Google2Client", "/?0").getLocation();
+        return ok(views.html.index.render());
+		 // profile (maybe null if not authenticated)
+		///final CommonProfile profile = getUserProfile();
+		//return ok(views.html.index.render(profile));
+	}
+	
+	@RequiresAuthentication(clientName = "Google2Client")
+	public static Result protectedIndex() {
+	  // profile
+	  final CommonProfile profile = getUserProfile();
+	  return ok(views.html.protectedIndex.render(profile));
 	}
 	
 	private static synchronized void createWebSocketForPlayer(final Player player) {
