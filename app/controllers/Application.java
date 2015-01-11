@@ -36,10 +36,12 @@ public class Application extends JavaController {
 	private static List<Player> playerListIdle = new LinkedList<>();
 	
     public static Result gamecenter() {
+        // check if logged in via OAuth 2.0
         CommonProfile googleProfile = getUserProfile();
         Logger.debug("gamecenter Google Profile: " + googleProfile);
         if (googleProfile != null) {
             Logger.debug("Firstname " + googleProfile.getFirstName() + " Lastname " + googleProfile.getFamilyName());
+            session("loggedIn", "true");
         }
     	//check if user is logged in
     	if(session("loggedIn") != null){
@@ -352,14 +354,8 @@ public class Application extends JavaController {
 	public static Result loginSubmit(){
 		DynamicForm dF = Form.form().bindFromRequest();
 		Logger.debug(dF.get("username")+" logged in with password: "+dF.get("password"));
-		CommonProfile googleProfile = getUserProfile();
-		Logger.debug("Google Profile: " + googleProfile);
-		if (googleProfile != null) {
-		    Logger.debug("Firstname " + googleProfile.getFirstName() + " Lastname " + googleProfile.getFamilyName());
-		}
 		
-		if ((dF.get("username").equals("test") && dF.get("password").equals("123"))
-		        || googleProfile != null) {
+		if ((dF.get("username").equals("test") && dF.get("password").equals("123"))) {
 			session("loggedIn","true");
 			return gamecenter();
 		}
