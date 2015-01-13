@@ -84,10 +84,13 @@ public class Application extends JavaController {
 		Match match;
 		synchronized (openMatches) {
 		    match = openMatches.remove(matchId);
-		    informIdlePlayer();
         }
 		
 		Player joiner = getCurrentPlayer();
+		synchronized (playerListIdle) {
+            playerListIdle.remove(joiner);
+            informIdlePlayer();
+        }
 		match.join(joiner);
 		
 		synchronized (runningMatches) {
@@ -95,10 +98,9 @@ public class Application extends JavaController {
         }
 
 		setCookieID(COOKIE_MATCH_ID,matchId);
-		synchronized (playerListIdle) {
-		    playerListIdle.remove(joiner);
-        }
+		
 		Logger.info(joiner + " joined " + match);
+		Logger.debug("Idle Players: " + playerListIdle);
 		return playGame(8, true, 0, match);
 	}
 
@@ -133,9 +135,11 @@ public class Application extends JavaController {
 	
 	private static void informIdlePlayer() {
 	    // inform all idle player of new multiplayer game
-        for (Player player : new LinkedList<Player>(playerListIdle)){
-            Logger.debug("Refresh idle " + player);
-            player.reload("/play");
+        synchronized (playerListIdle) {
+            for (Player player : new LinkedList<Player>(playerListIdle)){
+                Logger.debug("Refresh idle " + player);
+                player.reload("/play");
+            }
         }
 	}
 
@@ -166,6 +170,8 @@ public class Application extends JavaController {
 	public static Result input(String move) {
 		Match match = getCurrentMatch();
 		Player player = getCurrentPlayer();
+		// restart Watchdog
+		player.resetWatchdog();
 
 		if (isPlayerOnTurn(player, match)) {
 		    match.getGameController().input(move);
@@ -291,8 +297,9 @@ public class Application extends JavaController {
 	
 	private static synchronized void removePlayer(Player player) {
 	    Logger.debug("remove " + player + " from playerMap");
+	    player.cancelWatchdog();
         playerMap.remove(player.getId());
-	    
+	    Logger.debug("Idle Players: " + playerListIdle);
 	    if (!playerListIdle.remove(player)) {
 	        Logger.debug(player + " gave up");
 	        // playe who left wasn't idle, kick him out of match

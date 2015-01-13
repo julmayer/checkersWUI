@@ -28,11 +28,15 @@ $(function() {
     ws.onmessage = function (evt) { 
     	// load content of given page
     	var received_msg = evt.data;
-        
-    	$("#content").load(received_msg + " #content")
+    	
+    	if (received_msg == "ping") {
+    	} else {
+    		$("#content").load(received_msg + " #content")
+    	}
     };
     
-    $('#createMPButton').on('click', function() {
+    $("#content").on("click","#createMPButton",function(event) {
 		ws.send($("#gamename").val());
+		loadContentFrom("/create/Multi"); 
 	});
 });

@@ -1,5 +1,8 @@
 package model;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import play.Logger;
 import play.mvc.WebSocket;
 
@@ -10,10 +13,14 @@ public class Player {
 	private WebSocket.Out<String> outStream;
 	private Match match;
 	private String wantedGameName;
+	private final Timer watchDog;
+	private TimerTask task;
+	private static final long WATCHDOG_TIMEOUT = 40000;
 	
 	public Player(int id, String name) {
 		this.name = name;
 		this.id = id;
+		this.watchDog = new Timer(true);
 	}
 	
 	public void setWantedGameName(String wantedGameName){
@@ -34,6 +41,7 @@ public class Player {
 	
 	public void setWebSocket(WebSocket<String> webSocket) {
         this.webSocket = webSocket;
+        resetWatchdog();
     }
 
     public void setOutStream(WebSocket.Out<String> outStream) {
@@ -50,6 +58,26 @@ public class Player {
     
     public Match getMatch() {
         return this.match;
+    }
+    
+    public void resetWatchdog() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new TimerTask() {
+            
+            @Override
+            public void run() {
+                outStream.write("ping");
+                
+            }
+        };
+        
+        watchDog.schedule(task, WATCHDOG_TIMEOUT, WATCHDOG_TIMEOUT);
+    }
+    
+    public void cancelWatchdog() {
+        watchDog.cancel();
     }
 	
     /**

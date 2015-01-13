@@ -1,7 +1,10 @@
-import play.*;
 import org.pac4j.core.client.Clients;
 import org.pac4j.oauth.client.Google2Client;
 import org.pac4j.play.Config;
+
+import play.Application;
+import play.GlobalSettings;
+import play.Logger;
 
 public class Global extends GlobalSettings {
 
