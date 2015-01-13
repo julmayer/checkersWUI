@@ -37,6 +37,7 @@ public class Application extends JavaController {
 	private static List<Player> playerListIdle = new LinkedList<>();
 	
     public static Result gamecenter() {
+        response().discardCookie(COOKIE_MATCH_ID);
         // check if logged in via OAuth 2.0
         CommonProfile googleProfile = getUserProfile();
         if (googleProfile != null) {
@@ -105,6 +106,11 @@ public class Application extends JavaController {
 
 	public static Result create(String type) {
 		Player hoster = getCurrentPlayer();
+		// remove hoster from idle players
+        synchronized (playerListIdle) {
+            playerListIdle.remove(hoster);
+        }
+        
 		Match match = new Match(new GameController(), hoster);
 
 		setCookieID(COOKIE_MATCH_ID, match.getId());
@@ -116,6 +122,7 @@ public class Application extends JavaController {
             }
 			Logger.info(hoster + " create multiplayer game " + match);
 			result = renderPage(match);
+			informIdlePlayer();
 		} else {
 			synchronized (runningMatches) {
 			    runningMatches.put(match.getId(), match);
@@ -123,11 +130,6 @@ public class Application extends JavaController {
 			Logger.info(hoster + " created singleplayer game " + match);
 			result = playGame(8, false, 0, match);
 		}
-		
-		// remove hoster from ide players
-		playerListIdle.remove(hoster);
-		
-		informIdlePlayer();
 		
 		return result;
 	}
@@ -323,7 +325,7 @@ public class Application extends JavaController {
 		return currentPlayer.getWebsocket();
 	}
 	
-	private static Player getCurrentPlayer() {
+	private static synchronized Player getCurrentPlayer() {
 	    String playerId;
 	    try {
 	        playerId = request().cookie(COOKIE_PLAYER_ID).value();
@@ -334,7 +336,7 @@ public class Application extends JavaController {
 	    return playerMap.get(playerIdKey);
 	}
 	
-	private static Match getCurrentMatch() {
+	private static synchronized Match getCurrentMatch() {
 	    String matchID = null;
 	    Cookie requestCookie= request().cookie(COOKIE_MATCH_ID);
 	    if (requestCookie != null) {
