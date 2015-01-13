@@ -88,8 +88,8 @@ public class Application extends JavaController {
 		Player joiner = getCurrentPlayer();
 		synchronized (playerListIdle) {
             playerListIdle.remove(joiner);
-            informIdlePlayer();
         }
+		informIdlePlayer();
 		match.join(joiner);
 		
 		synchronized (runningMatches) {
@@ -135,7 +135,8 @@ public class Application extends JavaController {
 	private static void informIdlePlayer() {
 	    // inform all idle player of new multiplayer game
         synchronized (playerListIdle) {
-            for (Player player : new LinkedList<Player>(playerListIdle)){
+            Logger.debug("Inform all idle Players " + playerListIdle);
+            for (Player player : playerListIdle){
                 Logger.debug("Refresh idle " + player);
                 player.reload("/play");
             }

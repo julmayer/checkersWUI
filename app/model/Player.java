@@ -70,7 +70,7 @@ public class Player {
             
             @Override
             public void run() {
-                Logger.debug("send ping to " + this);
+                Logger.debug("send ping to " + Player.this.toString());
                 outStream.write("ping");
                 
             }

@@ -31,6 +31,7 @@ $(function() {
     	
     	if (received_msg == "ping") {
     	} else {
+    		alert(received_msg);
     		$("#content").load(received_msg + " #content")
     	}
     };
