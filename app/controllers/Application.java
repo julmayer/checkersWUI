@@ -39,7 +39,6 @@ public class Application extends JavaController {
     public static Result gamecenter() {
         // check if logged in via OAuth 2.0
         CommonProfile googleProfile = getUserProfile();
-        Logger.debug("gamecenter Google Profile: " + googleProfile);
         if (googleProfile != null) {
             Logger.debug("Firstname " + googleProfile.getFirstName() + " Lastname " + googleProfile.getFamilyName());
             session("loggedIn", "true");

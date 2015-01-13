@@ -61,13 +61,16 @@ public class Player {
     }
     
     public void resetWatchdog() {
+        Logger.debug("resert Timer from " + this);
         if (task != null) {
+            Logger.debug("cancel old task");
             task.cancel();
         }
         task = new TimerTask() {
             
             @Override
             public void run() {
+                Logger.debug("send ping to " + this);
                 outStream.write("ping");
                 
             }
@@ -77,6 +80,7 @@ public class Player {
     }
     
     public void cancelWatchdog() {
+        Logger.debug("Cancel Watchdog of " + this);
         watchDog.cancel();
     }
 	
