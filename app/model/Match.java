@@ -2,7 +2,7 @@ package model;
 
 import play.Logger;
 import de.htwg.checkers.controller.IGameController;
-import de.htwg.checkers.controller.State;
+import de.htwg.checkers.models.State;
 import de.htwg.checkers.util.observer.Observer;
 
 public class Match implements Observer {

@@ -24,8 +24,8 @@ import play.mvc.Result;
 import play.mvc.WebSocket;
 import de.htwg.checkers.controller.GameController;
 import de.htwg.checkers.controller.IGameController;
-import de.htwg.checkers.controller.State;
 import de.htwg.checkers.models.Cell;
+import de.htwg.checkers.models.State;
 
 public class Application extends JavaController {
 	private static Map<String, Match> openMatches = new HashMap<String, Match>();
@@ -128,7 +128,7 @@ public class Application extends JavaController {
 			    runningMatches.put(match.getId(), match);
             }
 			Logger.info(hoster + " created singleplayer game " + match);
-			result = playGame(8, false, 0, match);
+			result = playGame(8, false, 1, match);
 		}
 		
 		return result;
